@@ -1,0 +1,64 @@
+openapi: 3.0.0
+info:
+  title: File Processing API
+  description: API to process input file and generate an output JSON file
+  version: 1.0.0
+components:
+  schemas:
+    ErrorMessage:
+      type: object
+      properties:
+        message:
+          type: string
+          description: Error message
+
+paths:
+  /api/files:
+    post:
+      summary: Upload a text file for processing
+      operationId: processFile
+      parameters:
+        - in: header
+          name: X-Correlation-Id
+          required: false
+          schema:
+            type: string
+            format: uuid
+          description: Correlation ID for tracking the request
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Must be named EntryFile.txt
+      responses:
+        '200':
+          description: Successful response with JSON file
+          content:
+            application/json:
+              schema:
+                type: object
+                description: JSON output file
+        '400':
+          description: Bad request, e.g., if file format is incorrect or missing/invalid Correlation-Id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Forbidden, External validation check fail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'

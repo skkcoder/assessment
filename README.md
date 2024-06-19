@@ -18,21 +18,22 @@ Develop a Restful system that accepts an input file of a specific format, proces
 * Coroutines
 * Spring Boot 3.2.x
 * PostgresSQL
+* Jdbi (Not using ORM for this task)
 * Docker
 
 #### [Sequence Flow](#sequence-flow)
 
 ```mermaid
 sequenceDiagram
-   participant Client as Client #00aaff
-   participant FileProcessorController as FileProcessorController #ffaa00
-   participant FileValidator as FileValidator #aa00ff
-   participant IPValidatorService as IPValidatorService #00ffaa
-   participant FileProcessorService as Service #ff00aa
-   participant RequestLoggingAspect as Aspect #aaff00
-   participant RequestLogService as Service #f0f0f0
-   participant Database as Database #aaaaff
-   participant DLQ as DLQ #ffaaaa
+   participant Client
+   participant FileProcessorController
+   participant FileValidator
+   participant IPValidatorService
+   participant FileProcessorService
+   participant RequestLoggingAspect
+   participant RequestLogService
+   participant Database
+   participant DLQ
    Client ->> FileProcessorController: Sends file upload request
    FileProcessorController ->> FileValidator: Validate file contents
    FileValidator ->> IPValidatorService: Request IP validation
@@ -99,8 +100,9 @@ sequenceDiagram
 | Jenny Walters | Rides A Scooter | 15.3      |
 
 #### [API](#api)
+* OpenAPI document can be accessed over [here](src/main/resources/openapi.yaml). 
+* Following API first development. However, not using any sort of code generators for this task.
 
-This is the api description
 
 #### [Database](#database)
 For every request for file processing, log the information in PostgresSQL.
