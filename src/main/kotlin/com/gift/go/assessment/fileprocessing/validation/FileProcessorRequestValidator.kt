@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component
 class FileProcessorRequestValidator(
     val ipValidators: List<IPValidator>
 ) {
-    suspend fun validate(ipResult: IPResult) {
+    fun validate(ipResult: IPResult) {
         when (ipResult) {
             is IPFail -> throw IPValidationError.InvalidIPError(ipResult.message)
             is IPInformation -> {

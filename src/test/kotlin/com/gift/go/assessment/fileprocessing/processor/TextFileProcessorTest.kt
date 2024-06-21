@@ -18,9 +18,8 @@ class TextFileProcessorTest {
         val file: File = File.createTempFile("test", ".txt")
         file.writeText(contents)
 
-        // When
-        val textFileProcessor = TextFileProcessor()
-        val entryFileContents = textFileProcessor.processTextFile(file)
+        // when
+        val entryFileContents = TextFileProcessor.processTextFile(file)
 
         // Then
         assertEquals(3, entryFileContents.size)
@@ -34,11 +33,8 @@ class TextFileProcessorTest {
         val file: File = File.createTempFile("test", ".txt")
         file.writeText(contents)
 
-        // When
-        val textFileProcessor = TextFileProcessor()
-
         // Then
-        assertThrows<TextFileProcessingError.InvalidTextFileContentError> { textFileProcessor.processTextFile(file) }
+        assertThrows<TextFileProcessingError.InvalidTextFileContentError> { TextFileProcessor.processTextFile(file) }
     }
 
 }
