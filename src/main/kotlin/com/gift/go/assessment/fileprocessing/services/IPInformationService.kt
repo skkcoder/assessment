@@ -5,12 +5,15 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.gift.go.assessment.fileprocessing.domain.IPFail
 import com.gift.go.assessment.fileprocessing.domain.IPInformation
 import com.gift.go.assessment.fileprocessing.domain.IPResult
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.function.client.awaitBody
 
 @Service
 class IPInformationService(val webClient: WebClient, val objectMapper: ObjectMapper) {
+
+    private val logger = LoggerFactory.getLogger(IPInformationService::class.java)
 
     /**
      * The IP information provided by the remote API returns 200 OK regardless
