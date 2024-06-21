@@ -8,7 +8,8 @@ data class IPInformation(
     val `as`: String,
     val country: String,
     val countryCode: String,
-    val status: String
+    val status: String,
+    val ip: String
 ) :
     IPResult()
 
