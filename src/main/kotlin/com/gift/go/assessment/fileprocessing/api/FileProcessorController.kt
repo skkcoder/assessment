@@ -15,9 +15,9 @@ import org.springframework.web.multipart.MultipartFile
 class FileProcessorController {
 
     @PostMapping("/api/files")
-    fun processFile(
+    suspend fun processFile(
         @RequestPart("file") file: MultipartFile,
-        @RequestHeader headers: HttpHeaders
+        @RequestHeader headers: HttpHeaders?
     ): ResponseEntity<Resource> {
         val jsonData = """
             "Name": "John Smith",

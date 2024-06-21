@@ -17,8 +17,9 @@ Develop a Restful system that accepts an input file of a specific format, proces
 * Kotlin 1.8.x
 * Coroutines
 * Spring Boot 3.2.x
+* R2DBC
 * PostgresSQL
-* Jdbi (Not using ORM for this task)
+* Jdbc (Not using ORM for this task)
 * Docker
 
 #### [Sequence Flow](#sequence-flow)
@@ -28,7 +29,7 @@ sequenceDiagram
    participant Client
    participant FileProcessorController
    participant FileValidator
-   participant IPValidatorService
+   participant IPInformationService
    participant FileProcessorService
    participant RequestLoggingAspect
    participant RequestLogService
@@ -36,8 +37,8 @@ sequenceDiagram
    participant DLQ
    Client ->> FileProcessorController: Sends file upload request
    FileProcessorController ->> FileValidator: Validate file contents
-   FileValidator ->> IPValidatorService: Request IP validation
-   IPValidatorService -->> FileValidator: Return IP validation result
+   FileValidator ->> IPInformationService: Request IP validation
+   IPInformationService -->> FileValidator: Return IP validation result
    FileValidator -->> FileProcessorController: Validation result
    alt Validation successful
       FileProcessorController ->> FileProcessorService: Process file content
@@ -120,5 +121,5 @@ For every request for file processing, log the information in PostgresSQL.
 
 
 #### [Alternatives and things to do](#alternatives-and-things-to-do)
-* If we need to design for high traffic, make use of non-blocking functionalities. To be discussed later.
+* Flyway migration
 * Idempotency of requests
