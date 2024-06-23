@@ -1,4 +1,4 @@
-package com.gift.go.assessment.fileprocessing.utils
+package com.gift.go.assessment.utils
 
 import com.gift.go.assessment.fileprocessing.domain.EntryFileContent
 import java.util.*
@@ -112,3 +112,23 @@ fun getEntryFileContentsProcessed() = listOf(
         15.3
     )
 )
+
+fun getOutputFileContents() = """
+    [
+      {
+        "name": "John Smith",
+        "transport": "Rides A Bike",
+        "topSpeed": 12.1
+      },
+      {
+        "name": "Mike Smith",
+        "transport": "Drives an SUV",
+        "topSpeed": 95.5
+      },
+      {
+        "name": "Jenny Walters",
+        "transport": "Rides A Scooter",
+        "topSpeed": 15.3
+      }
+    ]
+""".trimIndent()

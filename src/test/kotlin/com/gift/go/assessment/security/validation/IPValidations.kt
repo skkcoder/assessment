@@ -1,10 +1,7 @@
-package com.gift.go.assessment.fileprocessing.validation
+package com.gift.go.assessment.security.validation
 
-import com.gift.go.assessment.security.validation.IPValidations
 import com.gift.go.assessment.security.domain.IPFail
 import com.gift.go.assessment.security.domain.IPInformation
-import com.gift.go.assessment.security.validation.IPValidationError
-import com.gift.go.assessment.security.validation.IPValidator
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach

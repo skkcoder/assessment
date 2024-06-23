@@ -1,28 +1,26 @@
-package com.gift.go.assessment.fileprocessing.validation
+package com.gift.go.assessment.security.validation
 
 import com.gift.go.assessment.security.domain.IPInformation
-import com.gift.go.assessment.security.validation.IPValidationError
-import com.gift.go.assessment.security.validation.RestrictedDataCentresValidator
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 
-class RestrictedDataCentresValidatorTest {
+class RestrictedCountriesValidatorTest {
 
     companion object {
-        private val restrictedDataCentresValidator: RestrictedDataCentresValidator =
-            RestrictedDataCentresValidator("Microsoft Corporation,Amazon.com,Google LLC")
+        private val restrictedCountriesValidator: RestrictedCountriesValidator =
+            RestrictedCountriesValidator("China,Spain,United States")
 
         @JvmStatic
         @BeforeAll
         fun setup() {
-            restrictedDataCentresValidator.init()
+            restrictedCountriesValidator.init()
         }
     }
 
     @Test
-    fun `Throw RestrictedDataCenterIPError on passing an ip of restricted data centre`() {
+    fun `Throw RestrictedCountryIPError on passing an ip of restricted country`() {
         // given
         val ipInformation = IPInformation(
             isp = "Amazon.com",
@@ -34,10 +32,8 @@ class RestrictedDataCentresValidatorTest {
         )
 
         // Then
-        assertThrows<IPValidationError.RestrictedDataCenterIPError> {
-            restrictedDataCentresValidator.validate(
-                ipInformation
-            )
+        assertThrows<IPValidationError.RestrictedCountryIPError> {
+            restrictedCountriesValidator.validate(ipInformation)
         }
     }
 
@@ -55,7 +51,7 @@ class RestrictedDataCentresValidatorTest {
 
         // Then
         assertDoesNotThrow {
-            restrictedDataCentresValidator.validate(ipInformation)
+            restrictedCountriesValidator.validate(ipInformation)
         }
     }
 }

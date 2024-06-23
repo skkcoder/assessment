@@ -4,10 +4,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.gift.go.assessment.security.domain.IPFail
 import com.gift.go.assessment.security.domain.IPInformation
-import com.gift.go.assessment.fileprocessing.utils.getMockIPInformationForAws
-import com.gift.go.assessment.fileprocessing.utils.getMockIPInformationForAzure
-import com.gift.go.assessment.fileprocessing.utils.getMockIPInformationForGcp
-import com.gift.go.assessment.fileprocessing.utils.getReservedRangeIpInformation
+import com.gift.go.assessment.utils.getMockIPInformationForAws
+import com.gift.go.assessment.utils.getMockIPInformationForAzure
+import com.gift.go.assessment.utils.getMockIPInformationForGcp
+import com.gift.go.assessment.utils.getReservedRangeIpInformation
 import kotlinx.coroutines.test.runTest
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer

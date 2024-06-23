@@ -1,19 +1,27 @@
 package com.gift.go.assessment.fileprocessing.services
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.gift.go.assessment.fileprocessing.domain.EntryFileContent
 import com.gift.go.assessment.fileprocessing.processor.TextFileProcessor
 import java.io.File
 import org.springframework.stereotype.Service
 
 @Service
-class FileProcessorService(val objectMapper: ObjectMapper) {
+class FileProcessorService(
+    val objectMapper: ObjectMapper,
+    val fileService: FileService,
+    val textProcessor: TextFileProcessor
+) {
 
     fun process(fileContent: ByteArray): File {
-        // TODO -> Use temp directory and create the file in it.
-        val tempFile: File = File.createTempFile("temp", ".txt")
-        tempFile.writeBytes(fileContent)
-        val entryFileContents = TextFileProcessor.processTextFile(tempFile)
+        val tempFile = fileService.createTempFile("temp", ".txt", fileContent)
+        val entryFileContents = textProcessor.processTextFile(tempFile)
+        val jsonString = processEntryFileContents(entryFileContents)
+        val outcomeFile = fileService.createTempFile("OutcomeFile", ".json", jsonString)
+        return outcomeFile
+    }
 
+    private fun processEntryFileContents(entryFileContents: List<EntryFileContent>): String {
         val jsonList = entryFileContents.map { entry ->
             mapOf(
                 "name" to entry.name,
@@ -22,8 +30,6 @@ class FileProcessorService(val objectMapper: ObjectMapper) {
             )
         }
         val jsonString = objectMapper.writeValueAsString(jsonList)
-        val outcomeFile = File.createTempFile("OutcomeFile", ".json")
-        outcomeFile.writeText(jsonString)
-        return outcomeFile
+        return jsonString
     }
 }

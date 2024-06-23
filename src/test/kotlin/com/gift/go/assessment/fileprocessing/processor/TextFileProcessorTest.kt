@@ -1,9 +1,9 @@
 package com.gift.go.assessment.fileprocessing.processor
 
 import com.gift.go.assessment.fileprocessing.exceptions.TextFileProcessingError
-import com.gift.go.assessment.fileprocessing.utils.getEntryFileContentsProcessed
-import com.gift.go.assessment.fileprocessing.utils.getEntryFileInvalidContentFormat
-import com.gift.go.assessment.fileprocessing.utils.getEntryFileStringContents
+import com.gift.go.assessment.utils.getEntryFileContentsProcessed
+import com.gift.go.assessment.utils.getEntryFileInvalidContentFormat
+import com.gift.go.assessment.utils.getEntryFileStringContents
 import java.io.File
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.Test
@@ -19,7 +19,7 @@ class TextFileProcessorTest {
         file.writeText(contents)
 
         // when
-        val entryFileContents = TextFileProcessor.processTextFile(file)
+        val entryFileContents = TextFileProcessor().processTextFile(file)
 
         // Then
         assertEquals(3, entryFileContents.size)
@@ -34,7 +34,7 @@ class TextFileProcessorTest {
         file.writeText(contents)
 
         // Then
-        assertThrows<TextFileProcessingError.InvalidTextFileContentError> { TextFileProcessor.processTextFile(file) }
+        assertThrows<TextFileProcessingError.InvalidTextFileContentError> { TextFileProcessor().processTextFile(file) }
     }
 
 }

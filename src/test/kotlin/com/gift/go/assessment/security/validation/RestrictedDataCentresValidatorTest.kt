@@ -1,28 +1,26 @@
-package com.gift.go.assessment.fileprocessing.validation
+package com.gift.go.assessment.security.validation
 
 import com.gift.go.assessment.security.domain.IPInformation
-import com.gift.go.assessment.security.validation.IPValidationError
-import com.gift.go.assessment.security.validation.RestrictedCountriesValidator
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 
-class RestrictedCountriesValidatorTest {
+class RestrictedDataCentresValidatorTest {
 
     companion object {
-        private val restrictedCountriesValidator: RestrictedCountriesValidator =
-            RestrictedCountriesValidator("China,Spain,United States")
+        private val restrictedDataCentresValidator: RestrictedDataCentresValidator =
+            RestrictedDataCentresValidator("Microsoft Corporation,Amazon.com,Google LLC")
 
         @JvmStatic
         @BeforeAll
         fun setup() {
-            restrictedCountriesValidator.init()
+            restrictedDataCentresValidator.init()
         }
     }
 
     @Test
-    fun `Throw RestrictedCountryIPError on passing an ip of restricted country`() {
+    fun `Throw RestrictedDataCenterIPError on passing an ip of restricted data centre`() {
         // given
         val ipInformation = IPInformation(
             isp = "Amazon.com",
@@ -34,8 +32,10 @@ class RestrictedCountriesValidatorTest {
         )
 
         // Then
-        assertThrows<IPValidationError.RestrictedCountryIPError> {
-            restrictedCountriesValidator.validate(ipInformation)
+        assertThrows<IPValidationError.RestrictedDataCenterIPError> {
+            restrictedDataCentresValidator.validate(
+                ipInformation
+            )
         }
     }
 
@@ -53,7 +53,7 @@ class RestrictedCountriesValidatorTest {
 
         // Then
         assertDoesNotThrow {
-            restrictedCountriesValidator.validate(ipInformation)
+            restrictedDataCentresValidator.validate(ipInformation)
         }
     }
 }
