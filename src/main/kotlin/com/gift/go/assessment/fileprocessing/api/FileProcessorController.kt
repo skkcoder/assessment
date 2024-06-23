@@ -1,38 +1,40 @@
 package com.gift.go.assessment.fileprocessing.api
 
 import com.gift.go.assessment.fileprocessing.services.FileProcessorService
-import com.gift.go.assessment.fileprocessing.services.IPInformationService
-import com.gift.go.assessment.fileprocessing.validation.FileProcessorRequestValidator
+import java.io.InputStream
+import java.io.SequenceInputStream
+import java.util.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.reactive.asFlow
+import kotlinx.coroutines.withContext
 import org.springframework.core.io.FileSystemResource
 import org.springframework.core.io.Resource
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.http.server.reactive.ServerHttpRequest
+import org.springframework.http.codec.multipart.FilePart
+import org.springframework.http.codec.multipart.Part
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.multipart.MultipartFile
 
 @RestController
 class FileProcessorController(
-    val ipInformationService: IPInformationService,
     val fileProcessorService: FileProcessorService,
-    val fileProcessorRequestValidator: FileProcessorRequestValidator
 ) {
 
     @PostMapping("/api/files")
     suspend fun processFile(
-        @RequestPart("file") file: MultipartFile,
-        @RequestHeader headers: HttpHeaders?,
-        request: ServerHttpRequest
+        @RequestPart("file") filePart: FilePart,
+        @RequestHeader headers: HttpHeaders?
     ): ResponseEntity<Resource> {
-        // get ip information
-        val ipAddress = extractIPAddress(headers, request)
-        val ipInformation = ipInformationService.getIPInformation(ipAddress)
-        fileProcessorRequestValidator.validate(ipInformation)
-        val outcomeFile = fileProcessorService.process(file.bytes)
+
+        val outcomeFile = fileProcessorService.process(withContext(Dispatchers.IO) {
+            filePart.asInputStream().readAllBytes()
+        })
         // return Resource containing this outcomeFile
         val resource: Resource = FileSystemResource(outcomeFile)
         return ResponseEntity.ok()
@@ -41,9 +43,9 @@ class FileProcessorController(
             .body(resource)
     }
 
-    private fun extractIPAddress(headers: HttpHeaders?, request: ServerHttpRequest): String {
-        // extract ip address
-        return ""
-    }
-
 }
+
+suspend fun Part.asInputStream(): InputStream =
+    SequenceInputStream(
+        Collections.enumeration(content().asFlow().map { it.asInputStream() }.toList())
+    )

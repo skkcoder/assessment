@@ -1,4 +1,4 @@
-package com.gift.go.assessment.fileprocessing.domain
+package com.gift.go.assessment.security.domain
 
 sealed class IPResult
 
@@ -8,8 +8,7 @@ data class IPInformation(
     val `as`: String,
     val country: String,
     val countryCode: String,
-    val status: String,
-    val ip: String
+    val status: String
 ) :
     IPResult()
 

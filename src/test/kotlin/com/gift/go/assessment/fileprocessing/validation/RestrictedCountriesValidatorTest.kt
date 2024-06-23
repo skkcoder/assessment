@@ -1,7 +1,8 @@
 package com.gift.go.assessment.fileprocessing.validation
 
-import com.gift.go.assessment.fileprocessing.domain.IPInformation
-import com.gift.go.assessment.fileprocessing.exceptions.IPValidationError
+import com.gift.go.assessment.security.domain.IPInformation
+import com.gift.go.assessment.security.validation.IPValidationError
+import com.gift.go.assessment.security.validation.RestrictedCountriesValidator
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -29,8 +30,7 @@ class RestrictedCountriesValidatorTest {
             `as` = "AS14618 Amazon.com, Inc.",
             country = "United States",
             countryCode = "US",
-            status = "success",
-            ip = "192.168.1.2"
+            status = "success"
         )
 
         // Then
@@ -48,8 +48,7 @@ class RestrictedCountriesValidatorTest {
             `as` = "AS14618 Amazon.com, Inc.",
             country = "France",
             countryCode = "FR",
-            status = "success",
-            ip = "192.168.1.2"
+            status = "success"
         )
 
         // Then

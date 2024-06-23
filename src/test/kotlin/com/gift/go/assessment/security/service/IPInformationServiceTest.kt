@@ -1,10 +1,9 @@
-package com.gift.go.assessment.fileprocessing.service
+package com.gift.go.assessment.security.service
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.gift.go.assessment.fileprocessing.domain.IPFail
-import com.gift.go.assessment.fileprocessing.domain.IPInformation
-import com.gift.go.assessment.fileprocessing.services.IPInformationService
+import com.gift.go.assessment.security.domain.IPFail
+import com.gift.go.assessment.security.domain.IPInformation
 import com.gift.go.assessment.fileprocessing.utils.getMockIPInformationForAws
 import com.gift.go.assessment.fileprocessing.utils.getMockIPInformationForAzure
 import com.gift.go.assessment.fileprocessing.utils.getMockIPInformationForGcp
@@ -76,8 +75,6 @@ class IPInformationServiceTest {
             "Expected IPInformation, but got something unexpected ${resultIpInformation.javaClass.name}"
         }
         assertEquals("success", resultIpInformation.status)
-        // following asserts only check the contents whether it is present or not. Correctness of it
-        // belongs to the Validator, so it will be checked there
         assertNotNull(resultIpInformation.isp)
         assertNotNull(resultIpInformation.country)
         assertNotNull(resultIpInformation.org)

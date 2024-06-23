@@ -1,10 +1,10 @@
-package com.gift.go.assessment.fileprocessing.services
+package com.gift.go.assessment.security.service
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.gift.go.assessment.fileprocessing.domain.IPFail
-import com.gift.go.assessment.fileprocessing.domain.IPInformation
-import com.gift.go.assessment.fileprocessing.domain.IPResult
+import com.gift.go.assessment.security.domain.IPFail
+import com.gift.go.assessment.security.domain.IPInformation
+import com.gift.go.assessment.security.domain.IPResult
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient

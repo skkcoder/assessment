@@ -1,4 +1,4 @@
-package com.gift.go.assessment.fileprocessing.config
+package com.gift.go.assessment.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

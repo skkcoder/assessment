@@ -1,15 +1,14 @@
-package com.gift.go.assessment.fileprocessing.validation
+package com.gift.go.assessment.security.validation
 
-import com.gift.go.assessment.fileprocessing.domain.IPFail
-import com.gift.go.assessment.fileprocessing.domain.IPInformation
-import com.gift.go.assessment.fileprocessing.domain.IPResult
-import com.gift.go.assessment.fileprocessing.exceptions.IPValidationError
+import com.gift.go.assessment.security.domain.IPFail
+import com.gift.go.assessment.security.domain.IPInformation
+import com.gift.go.assessment.security.domain.IPResult
 import jakarta.annotation.PostConstruct
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component
-class FileProcessorRequestValidator(
+class IPValidations(
     val ipValidators: List<IPValidator>
 ) {
     fun validate(ipResult: IPResult) {
