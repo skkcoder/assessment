@@ -3,12 +3,16 @@ package com.gift.go.assessment.security.filter
 import com.gift.go.assessment.security.domain.IPResult
 import com.gift.go.assessment.security.service.IPInformationService
 import com.gift.go.assessment.security.service.SecurityAuditService
+import com.gift.go.assessment.security.validation.IPValidationError
 import com.gift.go.assessment.security.validation.IPValidations
 import java.time.LocalDateTime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.reactor.mono
+import org.slf4j.LoggerFactory
+import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Component
 import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.WebFilter
@@ -21,7 +25,7 @@ class SecurityFilter(
     val ipValidations: IPValidations,
     val auditService: SecurityAuditService
 ) : WebFilter {
-
+    private val logger = LoggerFactory.getLogger(SecurityFilter::class.java)
     override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
         val ip = extractIpInformation(exchange)
         val requestStartedAt = LocalDateTime.now()
@@ -30,13 +34,26 @@ class SecurityFilter(
             val ipResult = ipInformationService.getIPInformation(ip)
             addAttributesToExchange(exchange, ipResult, ip, requestStartedAt)
             ipValidations.validate(ipResult)
-        }.then(chain.filter(exchange))
+        }
+            .onErrorResume(IPValidationError::class.java) { e ->
+                logger.error("Error in validating IP", e)
+                buildError(exchange)
+            }
+            .then(chain.filter(exchange))
             .doAfterTerminate {
                 CoroutineScope(Dispatchers.IO).launch {
                     val securityAuditInformation = exchange.toSecurityAudit()
                     auditService.saveAudit(securityAuditInformation)
                 }
             }
+    }
+
+    private fun buildError(exchange: ServerWebExchange): Mono<Unit> {
+        exchange.response.statusCode = HttpStatus.FORBIDDEN
+        val bufferFactory = exchange.response.bufferFactory();
+        // Don't give more information to the attacker
+        val dataBuffer = bufferFactory.wrap("Unauthorized IP address".toByteArray())
+        return exchange.response.writeWith(Mono.just(dataBuffer)).then(Mono.just(Unit))
     }
 
     private fun addAttributesToExchange(

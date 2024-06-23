@@ -54,15 +54,6 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
-sourceSets {
-    integrationTest {
-        compileClasspath += main.output + test.output
-        runtimeClasspath += main.output + test.output
-        java.srcDir file('src/integrationTest/java')
-        resources.srcDir file('src/integrationTest/resources')
-    }
-}
-
 tasks.register('integrationTest', Test) {
     description = 'Runs the integration tests.'
     group = 'verification'

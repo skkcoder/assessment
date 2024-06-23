@@ -68,7 +68,7 @@ class SecurityFilterTest {
             .from(MockServerHttpRequest.head("localhost"))
 
         val webFilterChain = WebFilterChain { serverWebExchange ->
-            serverWebExchange.response.statusCode = HttpStatus.INTERNAL_SERVER_ERROR
+            serverWebExchange.response.statusCode = HttpStatus.FORBIDDEN
             Mono.empty()
         }
 
