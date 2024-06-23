@@ -15,14 +15,15 @@ Develop a Restful system that accepts an input file of a specific format, proces
 
 #### [Technology Stack](#technology-stack)
 * Kotlin 1.8.x
-* Coroutines
 * Spring Boot 3.2.x
-* R2DBC
 * PostgresSQL
 * Jdbc (Not using ORM for this task)
 * Docker
 
 #### [Sequence Flow](#sequence-flow)
+
+Features are divided into 2 separate concerns 1. Security and 2. FileProcessing
+Security Module will perform necessary IP validations and pass the baton to process the file.
 
 ```mermaid
 sequenceDiagram
@@ -34,7 +35,6 @@ sequenceDiagram
    participant RequestLoggingAspect
    participant RequestLogService
    participant Database
-   participant DLQ
    Client ->> FileProcessorController: Sends file upload request
    FileProcessorController ->> FileValidator: Validate file contents
    FileValidator ->> IPInformationService: Request IP validation
@@ -59,7 +59,6 @@ sequenceDiagram
       CoroutineScope -->>- RequestLoggingAspect: Coroutine completed
    else Exception in @AfterReturning
       RequestLoggingAspect ->>+ DLQ: Publish Exception during persist**
-      DLQ -->> RequestLoggingAspect: Acknowledge publish
    end
 
    alt Exception flow
@@ -76,7 +75,6 @@ sequenceDiagram
       DLQ -->> RequestLoggingAspect: Acknowledge publish
    end
 ```
-** DLQ mentioned in the sequence diagram is not an actual one, instead an in memory queue just to store the requests. Actual scenario will use a proper Queueing mechanism.
 
 #### [Input file format](#input-file-format)
 
@@ -121,5 +119,8 @@ For every request for file processing, log the information in PostgresSQL.
 
 
 #### [Alternatives and things to do](#alternatives-and-things-to-do)
-* Flyway migration
 * Idempotency of requests
+* Integration tests to a separate source set
+* Feature flag
+* Global exception handler to handle text processing errors and respond with BadRequest instead of 500 Internal Server Error
+* DLQ incase of any un expected errors in saving audit. The information should nt be lost and to be alerted.
