@@ -24,9 +24,9 @@ dependencies {
     implementation 'org.jetbrains.kotlin:kotlin-reflect'
 
     //  TODO database (for now not moving to reactive jdbc) and experimenting without orm
-//    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
-//    implementation 'org.flywaydb:flyway-core'
-//    runtimeOnly 'org.postgresql:postgresql'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'
+    implementation 'org.flywaydb:flyway-core'
+    runtimeOnly 'org.postgresql:postgresql'
 
     if(Os.isFamily(Os.FAMILY_MAC)) {
         runtimeOnly 'io.netty:netty-resolver-dns-native-macos:4.1.111.Final:osx-aarch_64'

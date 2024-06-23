@@ -3,7 +3,7 @@ package com.gift.go.assessment.security.filter
 import com.gift.go.assessment.security.domain.IPFail
 import com.gift.go.assessment.security.domain.IPInformation
 import com.gift.go.assessment.security.domain.IPResult
-import com.gift.go.assessment.security.domain.SecurityAuditInformation
+import com.gift.go.assessment.security.domain.SecurityAuditInformationDTO
 import java.lang.IllegalStateException
 import java.time.LocalDateTime
 import java.util.*
@@ -12,7 +12,7 @@ import org.springframework.web.server.ServerWebExchange
 /**
  * Find a way to gracefully handle the illegal states
  */
-fun ServerWebExchange.toSecurityAudit(): SecurityAuditInformation {
+fun ServerWebExchange.toSecurityAudit(): SecurityAuditInformationDTO {
     val ipResult = this.getAttribute<IPResult>("IP_INFO")
     val ip = this.getAttribute<String>("REQUEST_IP")
     val requestStartedAt = this.getAttribute<LocalDateTime>("REQUEST_START_TIME")
@@ -25,8 +25,7 @@ fun ServerWebExchange.toSecurityAudit(): SecurityAuditInformation {
     // FIXME -> Consider mappers
     return when (ipResult) {
         is IPInformation -> {
-            SecurityAuditInformation(
-                requestId = UUID.randomUUID(),
+            SecurityAuditInformationDTO(
                 requestIp = ip ?: "IP not found",
                 requestIpProvider = ipResult.isp,
                 requestCountryCode = ipResult.countryCode,
@@ -38,8 +37,7 @@ fun ServerWebExchange.toSecurityAudit(): SecurityAuditInformation {
         }
 
         is IPFail -> {
-            SecurityAuditInformation(
-                requestId = UUID.randomUUID(),
+            SecurityAuditInformationDTO(
                 requestIp = ip ?: "IP not found",
                 requestUri = requestUri,
                 requestStart = requestStartedAt ?: LocalDateTime.now(),

@@ -2,7 +2,7 @@ package com.gift.go.assessment.security.filter
 
 import com.gift.go.assessment.security.domain.IPFail
 import com.gift.go.assessment.security.domain.IPInformation
-import com.gift.go.assessment.security.domain.SecurityAuditInformation
+import com.gift.go.assessment.security.domain.SecurityAuditInformationDTO
 import com.gift.go.assessment.security.service.IPInformationService
 import com.gift.go.assessment.security.service.SecurityAuditService
 import com.gift.go.assessment.security.validation.IPValidationError
@@ -37,7 +37,7 @@ class SecurityFilterTest {
     fun `should filter successfully and call audit with valid IP`() = runTest {
         val ipInformation = IPInformation("isp", "org", "as", "country", "countryCode", "status")
         coEvery { mockIPInformationService.getIPInformation(any()) } returns ipInformation
-        coEvery { mockSecurityAuditService.saveAudit(any<SecurityAuditInformation>()) } returns Unit
+        coEvery { mockSecurityAuditService.saveAudit(any<SecurityAuditInformationDTO>()) } returns Unit
         every { mockIPValidations.validate(any<IPInformation>()) } returns Unit // Changed this line
 
         val mockServerWebExchange = MockServerWebExchange
@@ -52,7 +52,7 @@ class SecurityFilterTest {
             .verifyComplete()
         verify { mockIPValidations.validate(any<IPInformation>()) }
         coVerify { mockIPInformationService.getIPInformation(any()) }
-        coVerify { mockSecurityAuditService.saveAudit(any<SecurityAuditInformation>()) }
+        coVerify { mockSecurityAuditService.saveAudit(any<SecurityAuditInformationDTO>()) }
     }
 
 
@@ -62,7 +62,7 @@ class SecurityFilterTest {
         val ipFail = IPFail("localhost", "message", "fail")
         coEvery { mockIPInformationService.getIPInformation(any()) } returns ipFail
         every { mockIPValidations.validate(any<IPFail>()) } throws exception
-        coEvery { mockSecurityAuditService.saveAudit(any<SecurityAuditInformation>()) } returns Unit // Mock saveAudit
+        coEvery { mockSecurityAuditService.saveAudit(any<SecurityAuditInformationDTO>()) } returns Unit // Mock saveAudit
 
         val mockServerWebExchange = MockServerWebExchange
             .from(MockServerHttpRequest.head("localhost"))
@@ -79,7 +79,7 @@ class SecurityFilterTest {
 
         verify { mockIPValidations.validate(any<IPFail>()) }
         coVerify { mockIPInformationService.getIPInformation(any()) }
-        coVerify { mockSecurityAuditService.saveAudit(any<SecurityAuditInformation>()) }
+        coVerify { mockSecurityAuditService.saveAudit(any<SecurityAuditInformationDTO>()) }
     }
 
     companion object {
