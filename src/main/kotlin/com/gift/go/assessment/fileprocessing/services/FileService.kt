@@ -9,7 +9,7 @@ interface FileService {
 }
 
 @Component
-class DefaultFileFactory : FileService {
+class DefaultFileService : FileService {
     override fun createTempFile(prefix: String, suffix: String, content: ByteArray): File {
         val tempFile: File = File.createTempFile(prefix, suffix)
         tempFile.writeBytes(content)
