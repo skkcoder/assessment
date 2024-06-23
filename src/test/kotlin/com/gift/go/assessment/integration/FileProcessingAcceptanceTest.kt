@@ -11,7 +11,7 @@ import org.testcontainers.junit.jupiter.Testcontainers
 class FileProcessingAcceptanceTest : BaseTests() {
 
     @Test
-    fun `A file sent from valid ip should be processed, responds with Output file and an audit entry is saved`() {
+    fun `A file sent from valid ip should be processed, responds with OutcomeFile json and an audit entry is saved to db`() {
 
     }
 
