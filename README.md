@@ -29,53 +29,31 @@ Once the processing of file is complete, it will be audited for security purpose
 
 ```mermaid
 sequenceDiagram
-   participant Client
-   participant FileProcessorController
-   participant FileValidator
+   participant User
+   participant SecurityFilter
    participant IPInformationService
+   participant IPAPI
+   participant IPValidation
+   participant FileProcessorController
    participant FileProcessorService
-   participant RequestLoggingAspect
-   participant RequestLogService
-   participant Database
-   Client ->> FileProcessorController: Sends file upload request
-   FileProcessorController ->> FileValidator: Validate file contents
-   FileValidator ->> IPInformationService: Request IP validation
-   IPInformationService -->> FileValidator: Return IP validation result
-   FileValidator -->> FileProcessorController: Validation result
-   alt Validation successful
-      FileProcessorController ->> FileProcessorService: Process file content
-      FileProcessorService -->> FileProcessorController: Processing result
-      FileProcessorController ->> Client: Return response
-   else Validation failed
-      FileProcessorController ->> Client: Return validation error response
-   end
-
-   alt Normal flow
-      FileProcessorController ->> RequestLoggingAspect: Proceed with @AfterReturning
-      RequestLoggingAspect ->> RequestLoggingAspect: Create log entry for successful scenario
-      RequestLoggingAspect ->>+ CoroutineScope: Launch coroutine
-      CoroutineScope ->>+ RequestLogService: saveLog(log)
-      RequestLogService ->> Database: Save log entry
-      Database -->> RequestLogService: Log entry saved
-      RequestLogService -->>- CoroutineScope: Return
-      CoroutineScope -->>- RequestLoggingAspect: Coroutine completed
-   else Exception in @AfterReturning
-      RequestLoggingAspect ->>+ DLQ: Publish Exception during persist**
-   end
-
-   alt Exception flow
-      FileProcessorController ->> RequestLoggingAspect: Proceed with @AfterThrowing
-      RequestLoggingAspect ->> RequestLoggingAspect: Create log entry for the error scenario
-      RequestLoggingAspect ->>+ CoroutineScope: Launch coroutine
-      CoroutineScope ->>+ RequestLogService: saveLog(log)
-      RequestLogService ->> Database: Save log entry
-      Database -->> RequestLogService: Log entry saved
-      RequestLogService -->>- CoroutineScope: Return
-      CoroutineScope -->>- RequestLoggingAspect: Coroutine completed
-   else Exception in @AfterThrowing
-      RequestLoggingAspect ->>+ DLQ: Publish Exception during persist**
-      DLQ -->> RequestLoggingAspect: Acknowledge publish
-   end
+   participant AuditService
+      User->>SecurityFilter: Hits /api/files with input file
+      SecurityFilter->>IPInformationService: Invoke
+      IPInformationService->>IPAPI: Call
+      IPAPI-->>IPInformationService: Return IP Info
+      IPInformationService-->>SecurityFilter: Return IP Info
+      SecurityFilter->>IPValidation: Apply rules to validate ip
+      alt IP Validation Failed
+         SecurityFilter-->>User: 403 Forbidden
+         SecurityFilter->>AuditService: Save Audit
+      else IP Validation Succeeded
+         SecurityFilter->>FileProcessorController: Proceed to Controller
+         FileProcessorController->>FileProcessorService: Process request
+         FileProcessorService-->>FileProcessorController: Return OutcomeFile
+         FileProcessorController-->>SecurityFilter: Return OutcomeFile
+         SecurityFilter->>AuditService: Save Audit
+         SecurityFilter-->>User: Return OutcomeFile
+      end
 ```
 
 #### [Input file format](#input-file-format)
