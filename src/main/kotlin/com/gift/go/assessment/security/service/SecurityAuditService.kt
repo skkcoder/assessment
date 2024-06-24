@@ -17,9 +17,10 @@ class SecurityAuditService(val securityAuditRepository: SecurityAuditRepository)
     @Transactional
     suspend fun saveAudit(securityAuditInformationDTO: SecurityAuditInformationDTO) {
         val securityAuditInformation =  mapToTable(securityAuditInformationDTO)
+        // TODO could have used r2dbc here, Currently running the blocking operation in its own context instead of blocking the reactor thread.
         withContext(Dispatchers.IO) {
-            val auditId = securityAuditRepository.save(securityAuditInformation)
-            logger.info("Successfully logged audit in to the table - $auditId")
+            val audit = securityAuditRepository.save(securityAuditInformation)
+            logger.info("Successfully logged audit in to the table - ${audit.requestId}")
         }
     }
 }
