@@ -114,19 +114,19 @@ To perform a quick test, refer [quicktests.http](quicktests.http) and place the 
    WHEN POST /api/files is invoked
    THEN respond with 200 OK
       AND response contains valid OutcomeFile.json with expected json contents
-      AND an entry is persisted to assessment table
+      AND a security audit entry is persisted to assessment table
       
    GIVEN a file with valid entry file contents is uploaded
       AND from a invalid ip originating from a restricted country or datacenters
    WHEN POST /api/files is invoked
    THEN respond with 403 Forbidden
-      AND an entry is persisted to assessment table
+      AND a security audit entry is persisted to assessment table
    
    GIVEN a file with invalid entry file contents is uploaded
        AND from a valid ip
    WHEN POST /api/files is invoked
    THEN respond with 500 Internal Server Error  (TODO, this should be a BadRequest)
-      AND an entry is persisted to assessment table
+      AND a security audit entry is persisted to assessment table
 ```
 
 #### [Alternatives and things to do](#alternatives-and-things-to-do)
