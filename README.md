@@ -51,8 +51,8 @@ sequenceDiagram
          FileProcessorController->>FileProcessorService: Process request
          FileProcessorService-->>FileProcessorController: Return OutcomeFile
          FileProcessorController-->>SecurityFilter: Return OutcomeFile
-         SecurityFilter->>AuditService: Save Audit
          SecurityFilter-->>User: Return OutcomeFile
+         SecurityFilter->>AuditService: Save Audit
       end
 ```
 
