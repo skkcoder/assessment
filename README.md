@@ -38,8 +38,8 @@ sequenceDiagram
    participant FileProcessorService
    participant AuditService
       User->>SecurityFilter: Hits /api/files with input file
-      SecurityFilter->>IPInformationService: Invoke
-      IPInformationService->>IPAPI: Call
+      SecurityFilter->>IPInformationService: Requests IP Info
+      IPInformationService->>IPAPI: Requests IP Info
       IPAPI-->>IPInformationService: Return IP Info
       IPInformationService-->>SecurityFilter: Return IP Info
       SecurityFilter->>IPValidation: Apply rules to validate ip
