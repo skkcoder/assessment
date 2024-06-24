@@ -20,7 +20,7 @@ class TextFileProcessorTest {
         file.writeText(contents)
 
         // when
-        val entryFileContents = TextFileProcessor().processTextFile(file)
+        val entryFileContents = TextFileProcessor().processTextFile(contents.toByteArray())
 
         // Then
         assertEquals(3, entryFileContents.size)
@@ -35,7 +35,7 @@ class TextFileProcessorTest {
         file.writeText(contents)
 
         // Then
-        assertThrows<TextFileProcessingError.InvalidTextFileContentError> { TextFileProcessor().processTextFile(file) }
+        assertThrows<TextFileProcessingError.InvalidTextFileContentError> { TextFileProcessor().processTextFile(contents.toByteArray()) }
     }
 
 }

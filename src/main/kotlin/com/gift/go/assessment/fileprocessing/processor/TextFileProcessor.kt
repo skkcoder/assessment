@@ -13,13 +13,12 @@ class TextFileProcessor {
         private const val LINE_SPLITTER = "|"
     }
 
-    fun processTextFile(file: File): List<EntryFileContent> {
-        return file.useLines {
-            it
-                .filter { line -> line.trim().isNotBlank() }
-                .map { line -> processLine(line) }
-                .toList()
-        }
+    fun processTextFile(byteArray: ByteArray): List<EntryFileContent> {
+        return String(byteArray).split("\n")
+            .filter { line -> line.trim().isNotBlank() }
+            .map { line ->
+                processLine(line)
+            }.toList()
     }
 
     private fun processLine(line: String): EntryFileContent = try {

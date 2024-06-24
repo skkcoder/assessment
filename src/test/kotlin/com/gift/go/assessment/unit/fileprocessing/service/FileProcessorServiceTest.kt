@@ -31,7 +31,6 @@ class FileProcessorServiceTest {
         val entryFileBytes = getEntryFileStringContents().toByteArray()
         // when
         every { textFileProcessor.processTextFile(any()) } returns getEntryFileContentsProcessed()
-        every { fileService.createTempFile(any(), any(), any<ByteArray>()) } returns tempFile
         every { fileService.createTempFile(any(), any(), any<String>()) } returns outFile
         every { objectMapper.writeValueAsString(any()) } returns getOutputFileContents()
         val result = FileProcessorService(objectMapper, fileService, textFileProcessor).process(entryFileBytes)

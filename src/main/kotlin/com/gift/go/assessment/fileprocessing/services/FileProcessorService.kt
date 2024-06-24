@@ -14,8 +14,7 @@ class FileProcessorService(
 ) {
 
     fun process(fileContent: ByteArray): File {
-        val tempFile = fileService.createTempFile("temp", ".txt", fileContent)
-        val entryFileContents = textProcessor.processTextFile(tempFile)
+        val entryFileContents = textProcessor.processTextFile(fileContent)
         val jsonString = processEntryFileContents(entryFileContents)
         val outcomeFile = fileService.createTempFile("OutcomeFile", ".json", jsonString)
         return outcomeFile
