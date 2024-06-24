@@ -165,3 +165,31 @@ fun getWireMockStubForIPValidScenario() = wireMockServer.addStubMapping(
                 )
         ).build()
 )
+
+fun getWireMockStubForIPInValidScenario() = wireMockServer.addStubMapping(
+    WireMock.get(urlEqualTo("/json/149.251.252.66"))
+        .willReturn(
+            aResponse()
+                .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
+                .withBody(
+                    """
+                    {
+                      "query": "149.251.252.66",
+                      "status": "success",
+                      "country": "China",
+                      "countryCode": "GB",
+                      "region": "BW",
+                      "regionName": "Baden-Wurttemberg",
+                      "city": "Böblingen",
+                      "zip": "71034",
+                      "lat": 48.6779,
+                      "lon": 8.97297,
+                      "timezone": "Europe/Berlin",
+                      "isp": "EntServ Deutschland GmbH",
+                      "org": "Triaton Frankfurt",
+                      "as": "AS15854 EntServ Deutschland GmbH"
+                    }
+                """
+                )
+        ).build()
+)

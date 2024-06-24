@@ -1,5 +1,6 @@
 package com.gift.go.assessment.integration
 
+import com.gift.go.assessment.security.repositories.SecurityAuditRepository
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
@@ -20,6 +21,8 @@ abstract class BaseTests {
     @Autowired
     lateinit var restTemplate: TestRestTemplate
 
+    @Autowired
+    lateinit var securityAuditRepository: SecurityAuditRepository
 
     companion object {
         @Container

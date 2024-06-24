@@ -2,11 +2,17 @@ package com.gift.go.assessment.integration
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.gift.go.assessment.utils.getEntryFileStringContents
+import com.gift.go.assessment.utils.getOutputFileContents
+import com.gift.go.assessment.utils.getWireMockStubForIPInValidScenario
 import com.gift.go.assessment.utils.getWireMockStubForIPValidScenario
 import java.time.Duration
 import org.awaitility.Awaitility
+import org.junit.jupiter.api.Assertions.assertAll
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertAll
+import org.skyscreamer.jsonassert.JSONAssert
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.ByteArrayResource
 import org.springframework.http.HttpEntity
@@ -14,23 +20,89 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.RequestEntity
+import org.springframework.http.ResponseEntity
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
 import org.testcontainers.junit.jupiter.Testcontainers
+import kotlin.test.assertTrue
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 @DirtiesContext
 class FileProcessingIntegrationTest : BaseTests() {
 
+    @BeforeEach
+    fun setUpCleanState() {
+        securityAuditRepository.deleteAll()
+    }
+
     @Test
     fun `A file sent from valid ip should be processed, responds with OutcomeFile json and an audit entry is saved to db`() {
         // TODO migrate to rest assured for cleaner test
 
-        // Given an input file with Header X-Forwarded-For
+        // given
+        val (headers, body: MultiValueMap<String, Any>) = prepareInput("149.250.252.66")
+
+        // when
+        getWireMockStubForIPValidScenario()
+        val request = RequestEntity.post("/api/files")
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .headers(headers)
+            .body(body)
+        val response = restTemplate.exchange(request, ByteArrayResource::class.java)
+
+        // then
+        assertEquals(HttpStatus.OK, response.statusCode)
+        JSONAssert.assertEquals(getOutputFileContents(),  String(getResponseContents(response)), true)
+
+        Awaitility.await().atMost(Duration.ofSeconds(1))
+            .untilAsserted {
+                val audits = securityAuditRepository.findAll().toList()
+                assertEquals(1, audits.size)
+                assertEquals("149.250.252.66", audits.first().requestIp)
+                assertEquals(200, audits.first().responseCode)
+            }
+    }
+
+    @Test
+    fun `A file sent from invalid ip should be processed, responds with 403 Forbidden`() {
+        // TODO migrate to rest assured for cleaner test
+
+        // given
+        val (headers, body: MultiValueMap<String, Any>) = prepareInput("149.251.252.66")
+
+        // when
+        getWireMockStubForIPInValidScenario()
+        val request = RequestEntity.post("/api/files")
+            .contentType(MediaType.MULTIPART_FORM_DATA)
+            .headers(headers)
+            .body(body)
+        val response = restTemplate.exchange(request, String::class.java)
+
+        // then
+        assertEquals(HttpStatus.FORBIDDEN, response.statusCode)
+
+        Awaitility.await().atMost(Duration.ofSeconds(1))
+            .untilAsserted {
+                val audits = securityAuditRepository.findAll().toList()
+                assertEquals(1, audits.size)
+                assertEquals("149.251.252.66", audits.first().requestIp)
+                assertEquals(403, audits.first().responseCode)
+            }
+
+    }
+
+
+    private fun getResponseContents(response: ResponseEntity<ByteArrayResource>): ByteArray {
+        val responseBody: ByteArrayResource = response.body!!
+        val fileContentAsByteArray: ByteArray = responseBody.byteArray
+        return fileContentAsByteArray
+    }
+
+    private fun prepareInput(ip: String): Pair<HttpHeaders, MultiValueMap<String, Any>> {
         val headers = HttpHeaders()
-        headers.add("X-Forwarded-For", "149.250.252.66")
+        headers.add("X-Forwarded-For", ip)
         val fileContents = getEntryFileStringContents()
         val byteArray = fileContents.toByteArray(Charsets.UTF_8)
         val resource = object : ByteArrayResource(byteArray) {
@@ -42,23 +114,7 @@ class FileProcessingIntegrationTest : BaseTests() {
         val body: MultiValueMap<String, Any> = LinkedMultiValueMap<String, Any>().apply {
             add("file", part)
         }
-
-        // when
-        getWireMockStubForIPValidScenario()
-        val request = RequestEntity.post("/api/files")
-            .contentType(MediaType.MULTIPART_FORM_DATA)
-            .headers(headers)
-            .body(body)
-
-        val response = restTemplate.exchange(request, String::class.java)
-
-        // Then expect 200 OK with OutcomeFile.json
-        assertEquals(HttpStatus.OK, response.statusCode)
-
-        // assert file contents
-
-        // use awaitility to assert db operation,
-
+        return Pair(headers, body)
     }
 
 }
