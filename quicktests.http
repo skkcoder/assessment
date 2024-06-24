@@ -1,0 +1,14 @@
+###
+POST http://localhost:8080/api/files HTTP/1.1
+#X-Forwarded-For: 123.123.123.123
+X-Forwarded-For: 149.250.252.66
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="file.txt"
+
+< /Users/kannath/file.txt
+--WebAppBoundary
+
+
+

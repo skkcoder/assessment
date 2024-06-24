@@ -11,7 +11,8 @@ Develop a Restful system that accepts an input file of a specific format, proces
 5. [API](#api)
 6. [Database](#database)
 7. [Acceptance Criteria](#acceptance-criteria)
-8. [Alternatives and things to do](#alternatives-and-things-to-do)
+8. [Testing locally](#testing-locally)
+9. [Alternatives and things to do](#alternatives-and-things-to-do)
 
 #### [Technology Stack](#technology-stack)
 * Kotlin 1.8.x
@@ -117,6 +118,15 @@ For every request for file processing, log the information in PostgresSQL.
 8. Time Lapsed – The time taken (in milliseconds) to complete the request
 
 #### [Acceptance Criteria](#acceptance-criteria)
+
+#### [Testing locally](#testing-locally)
+A [Makefile](Makefile) is included in the project root, which will start the application and its dependencies in clean state.
+```shell
+make dev build execute
+```
+To perform a quick test, refer [quicktests.http](quicktests.http) and place the [file.txt](file.txt) in an appropriate location.
+* Forbidden scenario - Use IP 123.123.123.123
+* Success scenario - Use IP 149.250.252.66
 
 
 #### [Alternatives and things to do](#alternatives-and-things-to-do)
