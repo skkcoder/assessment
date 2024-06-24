@@ -121,6 +121,6 @@ For every request for file processing, log the information in PostgresSQL.
 #### [Alternatives and things to do](#alternatives-and-things-to-do)
 * Idempotency of requests
 * Integration tests to a separate source set
-* Feature flag
+* Feature flag - Currently it is a simple implementation using configuration properties. 
 * Global exception handler to handle text processing errors and respond with BadRequest instead of 500 Internal Server Error
 * DLQ incase of any un expected errors in saving audit. The information should nt be lost and to be alerted.

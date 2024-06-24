@@ -1,8 +1,10 @@
-package com.gift.go.assessment.security.filter
+package com.gift.go.assessment.unit.security.filter
 
+import com.gift.go.assessment.security.config.IPProperties
 import com.gift.go.assessment.security.domain.IPFail
 import com.gift.go.assessment.security.domain.IPInformation
 import com.gift.go.assessment.security.domain.SecurityAuditInformationDTO
+import com.gift.go.assessment.security.filter.SecurityFilter
 import com.gift.go.assessment.security.service.IPInformationService
 import com.gift.go.assessment.security.service.SecurityAuditService
 import com.gift.go.assessment.security.validation.IPValidationError
@@ -30,8 +32,10 @@ class SecurityFilterTest {
     private val mockIPInformationService: IPInformationService = mockk<IPInformationService>()
     private val mockIPValidations: IPValidations = mockk<IPValidations>()
     private val mockSecurityAuditService: SecurityAuditService = mockk<SecurityAuditService>()
+    private val mockIPProperties = mockk<IPProperties>()
 
-    private val filter = SecurityFilter(mockIPInformationService, mockIPValidations, mockSecurityAuditService)
+    private val filter =
+        SecurityFilter(mockIPInformationService, mockIPValidations, mockSecurityAuditService, mockIPProperties)
 
     @Test
     fun `should filter successfully and call audit with valid IP`() = runTest {
@@ -39,6 +43,7 @@ class SecurityFilterTest {
         coEvery { mockIPInformationService.getIPInformation(any()) } returns ipInformation
         coEvery { mockSecurityAuditService.saveAudit(any<SecurityAuditInformationDTO>()) } returns Unit
         every { mockIPValidations.validate(any<IPInformation>()) } returns Unit // Changed this line
+        every { mockIPProperties.validation.enabled } returns true
 
         val mockServerWebExchange = MockServerWebExchange
             .from(MockServerHttpRequest.head("localhost"))
@@ -62,7 +67,8 @@ class SecurityFilterTest {
         val ipFail = IPFail("localhost", "message", "fail")
         coEvery { mockIPInformationService.getIPInformation(any()) } returns ipFail
         every { mockIPValidations.validate(any<IPFail>()) } throws exception
-        coEvery { mockSecurityAuditService.saveAudit(any<SecurityAuditInformationDTO>()) } returns Unit // Mock saveAudit
+        coEvery { mockSecurityAuditService.saveAudit(any<SecurityAuditInformationDTO>()) } returns Unit
+        every { mockIPProperties.validation.enabled } returns true
 
         val mockServerWebExchange = MockServerWebExchange
             .from(MockServerHttpRequest.head("localhost"))
@@ -74,7 +80,7 @@ class SecurityFilterTest {
 
         StepVerifier.create(filter.filter(mockServerWebExchange, webFilterChain))
             .expectSubscription()
-            .expectError()
+            .expectComplete()
             .verify()
 
         verify { mockIPValidations.validate(any<IPFail>()) }

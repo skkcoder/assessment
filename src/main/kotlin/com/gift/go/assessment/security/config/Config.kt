@@ -1,15 +1,17 @@
-package com.gift.go.assessment.config
+package com.gift.go.assessment.security.config
 
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.reactive.function.client.WebClient
 
 @Configuration
-class Config {
+@ConfigurationPropertiesScan
+class Config(val ipProperties: IPProperties) {
 
     @Bean
     fun webClient(builder: WebClient.Builder): WebClient =
         builder
-            .baseUrl("http://ip-api.com/") // TODO make it configurable
+            .baseUrl(ipProperties.validation.apiUrl)
             .build()
 }

@@ -1,6 +1,7 @@
-package com.gift.go.assessment.fileprocessing.processor
+package com.gift.go.assessment.unit.fileprocessing.processor
 
 import com.gift.go.assessment.fileprocessing.exceptions.TextFileProcessingError
+import com.gift.go.assessment.fileprocessing.processor.TextFileProcessor
 import com.gift.go.assessment.utils.getEntryFileContentsProcessed
 import com.gift.go.assessment.utils.getEntryFileInvalidContentFormat
 import com.gift.go.assessment.utils.getEntryFileStringContents

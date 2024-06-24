@@ -1,7 +1,11 @@
-package com.gift.go.assessment.security.validation
+package com.gift.go.assessment.unit.security.validation
 
+import com.gift.go.assessment.security.config.IPProperties
 import com.gift.go.assessment.security.domain.IPInformation
-import org.junit.jupiter.api.BeforeAll
+import com.gift.go.assessment.security.validation.IPValidationError
+import com.gift.go.assessment.security.validation.RestrictedDataCentresValidator
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
@@ -9,14 +13,9 @@ import org.junit.jupiter.api.assertThrows
 class RestrictedDataCentresValidatorTest {
 
     companion object {
+        private val ipProperties = mockk<IPProperties>()
         private val restrictedDataCentresValidator: RestrictedDataCentresValidator =
-            RestrictedDataCentresValidator("Microsoft Corporation,Amazon.com,Google LLC")
-
-        @JvmStatic
-        @BeforeAll
-        fun setup() {
-            restrictedDataCentresValidator.init()
-        }
+            RestrictedDataCentresValidator(ipProperties)
     }
 
     @Test
@@ -30,6 +29,9 @@ class RestrictedDataCentresValidatorTest {
             countryCode = "US",
             status = "success"
         )
+
+        // when
+        every { ipProperties.restricted.datacentres } returns setOf("Microsoft Corporation","Amazon.com","Google LLC")
 
         // Then
         assertThrows<IPValidationError.RestrictedDataCenterIPError> {
@@ -50,6 +52,9 @@ class RestrictedDataCentresValidatorTest {
             countryCode = "FR",
             status = "success"
         )
+
+        // when
+        every { ipProperties.restricted.datacentres } returns setOf("Microsoft Corporation","Amazon.com","Google LLC")
 
         // Then
         assertDoesNotThrow {

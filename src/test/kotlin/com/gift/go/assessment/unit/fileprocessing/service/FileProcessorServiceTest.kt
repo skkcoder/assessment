@@ -1,4 +1,4 @@
-package com.gift.go.assessment.fileprocessing.service
+package com.gift.go.assessment.unit.fileprocessing.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.gift.go.assessment.fileprocessing.processor.TextFileProcessor

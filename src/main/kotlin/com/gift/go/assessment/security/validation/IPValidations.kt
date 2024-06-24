@@ -1,5 +1,6 @@
 package com.gift.go.assessment.security.validation
 
+import com.gift.go.assessment.security.config.IPProperties
 import com.gift.go.assessment.security.domain.IPFail
 import com.gift.go.assessment.security.domain.IPInformation
 import com.gift.go.assessment.security.domain.IPResult
@@ -29,17 +30,10 @@ interface IPValidator {
 
 @Component
 class RestrictedDataCentresValidator(
-    @Value("\${ip.restricted.datacentres}") val restrictedDataCentres: String
+    val ipProperties: IPProperties
 ) : IPValidator {
-    private lateinit var restrictedDataCentreSet: Set<String>
-
-    @PostConstruct
-    fun init() {
-        restrictedDataCentreSet = this.restrictedDataCentres.split(",").toSet()
-    }
-
     override fun validate(ipInformation: IPInformation) {
-        if (ipInformation.isp in restrictedDataCentreSet) {
+        if (ipInformation.isp in ipProperties.restricted.datacentres) {
             throw IPValidationError.RestrictedDataCenterIPError("Requests not allowed for requests originating from ${ipInformation.isp}")
         }
     }
@@ -47,17 +41,11 @@ class RestrictedDataCentresValidator(
 
 @Component
 class RestrictedCountriesValidator(
-    @Value("\${ip.restricted.countries}") val restrictedCountries: String
+    val ipProperties: IPProperties
 ) : IPValidator {
-    private lateinit var restrictedCountrySet: Set<String>
-
-    @PostConstruct
-    fun init() {
-        restrictedCountrySet = this.restrictedCountries.split(",").toSet()
-    }
 
     override fun validate(ipInformation: IPInformation) {
-        if (ipInformation.country in restrictedCountrySet) {
+        if (ipInformation.country in ipProperties.restricted.countries) {
             throw IPValidationError.RestrictedCountryIPError("Requests not allowed for requests originating from ${ipInformation.country}")
         }
     }

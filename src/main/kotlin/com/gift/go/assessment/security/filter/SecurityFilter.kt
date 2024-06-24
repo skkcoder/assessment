@@ -1,5 +1,6 @@
 package com.gift.go.assessment.security.filter
 
+import com.gift.go.assessment.security.config.IPProperties
 import com.gift.go.assessment.security.domain.IPResult
 import com.gift.go.assessment.security.service.IPInformationService
 import com.gift.go.assessment.security.service.SecurityAuditService
@@ -12,7 +13,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.reactor.mono
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
-import org.springframework.http.HttpStatusCode
 import org.springframework.stereotype.Component
 import org.springframework.web.server.ServerWebExchange
 import org.springframework.web.server.WebFilter
@@ -23,29 +23,35 @@ import reactor.core.publisher.Mono
 class SecurityFilter(
     val ipInformationService: IPInformationService,
     val ipValidations: IPValidations,
-    val auditService: SecurityAuditService
+    val auditService: SecurityAuditService,
+    val ipProperties: IPProperties
 ) : WebFilter {
+
     private val logger = LoggerFactory.getLogger(SecurityFilter::class.java)
+
     override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
         val ip = extractIpInformation(exchange)
         val requestStartedAt = LocalDateTime.now()
-
+        // TODO - move above to mono
         return mono {
             val ipResult = ipInformationService.getIPInformation(ip)
             addAttributesToExchange(exchange, ipResult, ip, requestStartedAt)
-            ipValidations.validate(ipResult)
+            if (ipProperties.validation.enabled) {
+                ipValidations.validate(ipResult)
+            }
+        }.onErrorResume(IPValidationError::class.java) { e ->
+            logger.error("Error in validating IP", e)
+            buildError(exchange)
+        }.then(chain.filter(exchange)).doAfterTerminate {
+            saveSecurityAudit(exchange)
         }
-            .onErrorResume(IPValidationError::class.java) { e ->
-                logger.error("Error in validating IP", e)
-                buildError(exchange)
-            }
-            .then(chain.filter(exchange))
-            .doAfterTerminate {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val securityAuditInformation = exchange.toSecurityAudit()
-                    auditService.saveAudit(securityAuditInformation)
-                }
-            }
+    }
+
+    private fun saveSecurityAudit(exchange: ServerWebExchange) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val securityAuditInformation = exchange.toSecurityAudit()
+            auditService.saveAudit(securityAuditInformation)
+        }
     }
 
     private fun buildError(exchange: ServerWebExchange): Mono<Unit> {

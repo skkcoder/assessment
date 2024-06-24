@@ -1,4 +1,4 @@
-package com.gift.go.assessment.fileprocessing.api
+package com.gift.go.assessment.unit.fileprocessing.api
 
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

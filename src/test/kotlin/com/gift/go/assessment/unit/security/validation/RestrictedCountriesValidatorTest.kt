@@ -1,7 +1,11 @@
-package com.gift.go.assessment.security.validation
+package com.gift.go.assessment.unit.security.validation
 
+import com.gift.go.assessment.security.config.IPProperties
 import com.gift.go.assessment.security.domain.IPInformation
-import org.junit.jupiter.api.BeforeAll
+import com.gift.go.assessment.security.validation.IPValidationError
+import com.gift.go.assessment.security.validation.RestrictedCountriesValidator
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
@@ -9,14 +13,9 @@ import org.junit.jupiter.api.assertThrows
 class RestrictedCountriesValidatorTest {
 
     companion object {
+        private val ipProperties = mockk<IPProperties>()
         private val restrictedCountriesValidator: RestrictedCountriesValidator =
-            RestrictedCountriesValidator("China,Spain,United States")
-
-        @JvmStatic
-        @BeforeAll
-        fun setup() {
-            restrictedCountriesValidator.init()
-        }
+            RestrictedCountriesValidator(ipProperties)
     }
 
     @Test
@@ -30,6 +29,9 @@ class RestrictedCountriesValidatorTest {
             countryCode = "US",
             status = "success"
         )
+
+        // when
+        every { ipProperties.restricted.countries } returns setOf("China","Spain","United States")
 
         // Then
         assertThrows<IPValidationError.RestrictedCountryIPError> {
@@ -48,6 +50,9 @@ class RestrictedCountriesValidatorTest {
             countryCode = "FR",
             status = "success"
         )
+
+        // when
+        every { ipProperties.restricted.countries } returns setOf("China","Spain","United States")
 
         // Then
         assertDoesNotThrow {

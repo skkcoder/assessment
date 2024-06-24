@@ -1,8 +1,9 @@
-package com.gift.go.assessment.security.service
+package com.gift.go.assessment.unit.security.service
 
 import com.gift.go.assessment.security.domain.SecurityAuditInformationDTO
 import com.gift.go.assessment.security.domain.mapToTable
 import com.gift.go.assessment.security.repositories.SecurityAuditRepository
+import com.gift.go.assessment.security.service.SecurityAuditService
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk

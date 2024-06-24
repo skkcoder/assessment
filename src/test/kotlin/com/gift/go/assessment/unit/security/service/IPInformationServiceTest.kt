@@ -1,9 +1,10 @@
-package com.gift.go.assessment.security.service
+package com.gift.go.assessment.unit.security.service
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.gift.go.assessment.security.domain.IPFail
 import com.gift.go.assessment.security.domain.IPInformation
+import com.gift.go.assessment.security.service.IPInformationService
 import com.gift.go.assessment.utils.getMockIPInformationForAws
 import com.gift.go.assessment.utils.getMockIPInformationForAzure
 import com.gift.go.assessment.utils.getMockIPInformationForGcp
