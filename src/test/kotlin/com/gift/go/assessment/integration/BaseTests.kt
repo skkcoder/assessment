@@ -2,6 +2,8 @@ package com.gift.go.assessment.integration
 
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.test.context.DynamicPropertyRegistry
 import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
@@ -10,6 +12,8 @@ import org.testcontainers.lifecycle.Startables
 import org.testcontainers.utility.DockerImageName
 
 abstract class BaseTests {
+    @Autowired
+    lateinit var restTemplate: TestRestTemplate
 
     companion object {
         @Container
