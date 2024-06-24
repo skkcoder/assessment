@@ -16,8 +16,9 @@ Develop a Restful system that accepts an input file of a specific format, proces
 #### [Technology Stack](#technology-stack)
 * Kotlin 1.8.x
 * Spring Boot 3.2.x
+* Reactor and Coroutines
 * PostgresSQL
-* Jdbc (Not using ORM for this task)
+* Jdbc (Not using ORM or r2dbc for this task)
 * Docker
 
 #### [Sequence Flow](#sequence-flow)
