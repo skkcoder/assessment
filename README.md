@@ -134,5 +134,5 @@ To perform a quick test, refer [quicktests.http](quicktests.http) and place the 
 * Integration tests to a separate source set
 * Feature flag - Currently it is a simple implementation using configuration properties. 
 * Global exception handler to handle text processing errors and respond with BadRequest instead of 500 Internal Server Error
-* DLQ incase of any un expected errors in saving audit. The information should nt be lost and to be alerted.
+* In case of any un expected errors in saving audit, the information should nt be lost and to be alerted.
 * Improvements  in logging
