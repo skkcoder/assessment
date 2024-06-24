@@ -10,9 +10,8 @@ Develop a Restful system that accepts an input file of a specific format, proces
 4. [Output file format](#output-file-format)
 5. [API](#api)
 6. [Database](#database)
-7. [Acceptance Criteria](#acceptance-criteria)
-8. [Testing locally](#testing-locally)
-9. [Alternatives and things to do](#alternatives-and-things-to-do)
+7. [Testing locally](#testing-locally)
+8. [Alternatives and things to do](#alternatives-and-things-to-do)
 
 #### [Technology Stack](#technology-stack)
 * Kotlin 1.8.x
@@ -24,8 +23,8 @@ Develop a Restful system that accepts an input file of a specific format, proces
 #### [Sequence Flow](#sequence-flow)
 
 Features are divided into 2 separate concerns 1. Security and 2. FileProcessing
-Security Module will perform necessary IP validations and pass the baton to process the file.
-Once the processing of file is complete, it will be audited for security purposes.
+
+Security Module will perform necessary IP validations and pass the baton to process the file. Once the processing of file is complete, it will be audited for security purposes.
 
 ```mermaid
 sequenceDiagram
@@ -98,6 +97,7 @@ For every request for file processing, log the information in PostgresSQL.
 #### [Acceptance Criteria](#acceptance-criteria)
 
 #### [Testing locally](#testing-locally)
+
 A [Makefile](Makefile) is included in the project root, which will start the application and its dependencies in clean state.
 ```shell
 make dev build execute
@@ -106,6 +106,27 @@ To perform a quick test, refer [quicktests.http](quicktests.http) and place the 
 * Forbidden scenario - Use IP 123.123.123.123
 * Success scenario - Use IP 149.250.252.66
 
+##### Acceptance criteria
+```text
+   GIVEN a file with valid entry file contents is uploaded
+      AND from a valid ip
+   WHEN POST /api/files is invoked
+   THEN respond with 200 OK
+      AND response contains valid OutcomeFile.json with expected json contents
+      AND an entry is persisted to assessment table
+      
+   GIVEN a file with valid entry file contents is uploaded
+      AND from a invalid ip originating from a restricted country or datacenters
+   WHEN POST /api/files is invoked
+   THEN respond with 403 Forbidden
+      AND an entry is persisted to assessment table
+   
+   GIVEN a file with invalid entry file contents is uploaded
+       AND from a valid ip
+   WHEN POST /api/files is invoked
+   THEN respond with 500 Internal Server Error  (TODO, this should be a BadRequest)
+      AND an entry is persisted to assessment table
+```
 
 #### [Alternatives and things to do](#alternatives-and-things-to-do)
 * Idempotency of requests

@@ -29,22 +29,19 @@ class SecurityFilter(
 
     private val logger = LoggerFactory.getLogger(SecurityFilter::class.java)
 
-    override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> {
+    override fun filter(exchange: ServerWebExchange, chain: WebFilterChain): Mono<Void> = mono {
         val ip = extractIpInformation(exchange)
         val requestStartedAt = LocalDateTime.now()
-        // TODO - move above to mono
-        return mono {
-            val ipResult = ipInformationService.getIPInformation(ip)
-            addAttributesToExchange(exchange, ipResult, ip, requestStartedAt)
-            if (ipProperties.validation.enabled) {
-                ipValidations.validate(ipResult)
-            }
-        }.onErrorResume(IPValidationError::class.java) { e ->
-            logger.error("Error in validating IP", e)
-            buildError(exchange)
-        }.then(chain.filter(exchange)).doAfterTerminate {
-            saveSecurityAudit(exchange)
+        val ipResult = ipInformationService.getIPInformation(ip)
+        addAttributesToExchange(exchange, ipResult, ip, requestStartedAt)
+        if (ipProperties.validation.enabled) {
+            ipValidations.validate(ipResult)
         }
+    }.onErrorResume(IPValidationError::class.java) { e ->
+        logger.error("Error in validating IP", e)
+        buildError(exchange)
+    }.then(chain.filter(exchange)).doAfterTerminate {
+        saveSecurityAudit(exchange)
     }
 
     private fun saveSecurityAudit(exchange: ServerWebExchange) {
