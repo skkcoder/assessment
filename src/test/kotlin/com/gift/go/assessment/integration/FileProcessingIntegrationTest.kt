@@ -39,7 +39,7 @@ class FileProcessingIntegrationTest : BaseTests() {
         // TODO migrate to rest assured for cleaner test
 
         // given
-        val (headers, body: MultiValueMap<String, Any>) = prepareInput("149.250.252.66")
+        val (headers, body: MultiValueMap<String, Any>) = prepareInput("149.250.252.66", getEntryFileStringContents())
 
         // when
         getWireMockStubForIPValidScenario()
@@ -67,7 +67,7 @@ class FileProcessingIntegrationTest : BaseTests() {
         // TODO migrate to rest assured for cleaner test
 
         // given
-        val (headers, body: MultiValueMap<String, Any>) = prepareInput("149.251.252.66")
+        val (headers, body: MultiValueMap<String, Any>) = prepareInput("149.251.252.66", getEntryFileStringContents())
 
         // when
         getWireMockStubForIPInValidScenario()
@@ -86,6 +86,7 @@ class FileProcessingIntegrationTest : BaseTests() {
                 assertEquals(1, audits.size)
                 assertEquals("149.251.252.66", audits.first().requestIp)
                 assertEquals(403, audits.first().responseCode)
+                // TODO - more asserts
             }
 
     }
@@ -95,7 +96,7 @@ class FileProcessingIntegrationTest : BaseTests() {
         // This test should be actually 400 BadRequest by handling from ControllerAdvise (Not present in this project for now). Will tackle this later TIME!!
 
         // given
-        val (headers, body: MultiValueMap<String, Any>) = prepareInvalidInput("149.250.252.66")
+        val (headers, body: MultiValueMap<String, Any>) = prepareInput("149.250.252.66", getEntryFileInvalidContentFormat())
 
         // when
         getWireMockStubForIPValidScenario()
@@ -124,28 +125,10 @@ class FileProcessingIntegrationTest : BaseTests() {
         return fileContentAsByteArray
     }
 
-    private fun prepareInput(ip: String): Pair<HttpHeaders, MultiValueMap<String, Any>> {
+    private fun prepareInput(ip: String, entryFileContent: String): Pair<HttpHeaders, MultiValueMap<String, Any>> {
         val headers = HttpHeaders()
         headers.add("X-Forwarded-For", ip)
-        val fileContents = getEntryFileStringContents()
-        val byteArray = fileContents.toByteArray(Charsets.UTF_8)
-        val resource = object : ByteArrayResource(byteArray) {
-            override fun getFilename() = "file.txt"
-        }
-        val part: HttpEntity<ByteArrayResource> = HttpEntity(resource, HttpHeaders().apply {
-            contentType = MediaType.APPLICATION_OCTET_STREAM
-        })
-        val body: MultiValueMap<String, Any> = LinkedMultiValueMap<String, Any>().apply {
-            add("file", part)
-        }
-        return Pair(headers, body)
-    }
-
-    private fun prepareInvalidInput(ip: String): Pair<HttpHeaders, MultiValueMap<String, Any>> {
-        val headers = HttpHeaders()
-        headers.add("X-Forwarded-For", ip)
-        val fileContents = getEntryFileInvalidContentFormat()
-        val byteArray = fileContents.toByteArray(Charsets.UTF_8)
+        val byteArray = entryFileContent.toByteArray(Charsets.UTF_8)
         val resource = object : ByteArrayResource(byteArray) {
             override fun getFilename() = "file.txt"
         }
