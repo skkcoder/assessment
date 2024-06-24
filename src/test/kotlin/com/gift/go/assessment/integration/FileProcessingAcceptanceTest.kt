@@ -1,8 +1,6 @@
 package com.gift.go.assessment.integration
 
 import com.gift.go.assessment.utils.getEntryFileStringContents
-import java.io.File
-import java.lang.Byte.SIZE
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -15,7 +13,6 @@ import org.springframework.http.RequestEntity
 import org.springframework.test.annotation.DirtiesContext
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
-import org.springframework.web.multipart.MultipartFile
 import org.testcontainers.junit.jupiter.Testcontainers
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

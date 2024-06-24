@@ -19,19 +19,9 @@ import kotlin.test.assertEquals
 @ExtendWith(MockitoExtension::class)
 class FileProcessorServiceTest {
 
-    companion object {
-        private lateinit var sut: FileProcessorService
-        private val textFileProcessor = mockk<TextFileProcessor>()
-        private val fileService = mockk<FileService>()
-        private val objectMapper = mockk<ObjectMapper>()
-
-
-        @JvmStatic
-        @BeforeAll
-        fun setUp() {
-            sut = FileProcessorService(objectMapper, fileService, textFileProcessor)
-        }
-    }
+    private val textFileProcessor = mockk<TextFileProcessor>()
+    private val fileService = mockk<FileService>()
+    private val objectMapper = mockk<ObjectMapper>()
 
     @Test
     fun `Test entry file contents processed to generate output file`() {
@@ -44,7 +34,7 @@ class FileProcessorServiceTest {
         every { fileService.createTempFile(any(), any(), any<ByteArray>()) } returns tempFile
         every { fileService.createTempFile(any(), any(), any<String>()) } returns outFile
         every { objectMapper.writeValueAsString(any()) } returns getOutputFileContents()
-        val result = sut.process(entryFileBytes)
+        val result = FileProcessorService(objectMapper, fileService, textFileProcessor).process(entryFileBytes)
         // then
         assertEquals(outFile, result)
     }

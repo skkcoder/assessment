@@ -24,6 +24,7 @@ Develop a Restful system that accepts an input file of a specific format, proces
 
 Features are divided into 2 separate concerns 1. Security and 2. FileProcessing
 Security Module will perform necessary IP validations and pass the baton to process the file.
+Once the processing of file is complete, it will be audited for security purposes.
 
 ```mermaid
 sequenceDiagram
@@ -124,3 +125,4 @@ For every request for file processing, log the information in PostgresSQL.
 * Feature flag - Currently it is a simple implementation using configuration properties. 
 * Global exception handler to handle text processing errors and respond with BadRequest instead of 500 Internal Server Error
 * DLQ incase of any un expected errors in saving audit. The information should nt be lost and to be alerted.
+* Improvements  in logging

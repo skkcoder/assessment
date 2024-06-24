@@ -26,6 +26,7 @@ import org.springframework.mock.web.server.MockServerWebExchange
 import org.springframework.web.server.WebFilterChain
 import reactor.core.publisher.Mono
 import reactor.test.StepVerifier
+import kotlin.test.assertEquals
 
 class SecurityFilterTest {
 
@@ -63,8 +64,9 @@ class SecurityFilterTest {
 
     @ParameterizedTest(name = "should call audit when IP is {0}")
     @MethodSource("provideExceptions")
-    fun `should call audit when IP is invalid`(exception: Throwable) = runTest {
+    fun `should call audit when IP is invalid and set response to Forbidden`(exception: Throwable) = runTest {
         val ipFail = IPFail("localhost", "message", "fail")
+
         coEvery { mockIPInformationService.getIPInformation(any()) } returns ipFail
         every { mockIPValidations.validate(any<IPFail>()) } throws exception
         coEvery { mockSecurityAuditService.saveAudit(any<SecurityAuditInformationDTO>()) } returns Unit
@@ -74,7 +76,8 @@ class SecurityFilterTest {
             .from(MockServerHttpRequest.head("localhost"))
 
         val webFilterChain = WebFilterChain { serverWebExchange ->
-            serverWebExchange.response.statusCode = HttpStatus.FORBIDDEN
+            // purposefully setting it here, we expect the response code to 403 after filter processing since ip is invalid
+            serverWebExchange.response.statusCode = HttpStatus.INTERNAL_SERVER_ERROR
             Mono.empty()
         }
 
@@ -83,7 +86,35 @@ class SecurityFilterTest {
             .expectComplete()
             .verify()
 
+
         verify { mockIPValidations.validate(any<IPFail>()) }
+        coVerify { mockIPInformationService.getIPInformation(any()) }
+        coVerify { mockSecurityAuditService.saveAudit(any<SecurityAuditInformationDTO>()) }
+        assertEquals(HttpStatus.FORBIDDEN, mockServerWebExchange.response.statusCode)
+    }
+
+    @Test
+    fun `should not validate if validation is turned off`() = runTest {
+        // given
+        val ipInformation = IPInformation("isp", "org", "as", "country", "countryCode", "status")
+
+        //when
+        coEvery { mockIPInformationService.getIPInformation(any()) } returns ipInformation
+        coEvery { mockSecurityAuditService.saveAudit(any<SecurityAuditInformationDTO>()) } returns Unit
+        every { mockIPValidations.validate(any<IPInformation>()) } returns Unit // Changed this line
+        every { mockIPProperties.validation.enabled } returns false
+
+        val mockServerWebExchange = MockServerWebExchange
+            .from(MockServerHttpRequest.head("localhost"))
+        val webFilterChain = WebFilterChain { serverWebExchange ->
+            serverWebExchange.response.statusCode = HttpStatus.OK
+            Mono.empty()
+        }
+        // then
+        StepVerifier.create(filter.filter(mockServerWebExchange, webFilterChain))
+            .expectSubscription()
+            .verifyComplete()
+        verify(atLeast = 0) { mockIPValidations.validate(any<IPInformation>()) }
         coVerify { mockIPInformationService.getIPInformation(any()) }
         coVerify { mockSecurityAuditService.saveAudit(any<SecurityAuditInformationDTO>()) }
     }

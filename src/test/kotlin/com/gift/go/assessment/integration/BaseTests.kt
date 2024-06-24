@@ -12,6 +12,7 @@ import org.testcontainers.lifecycle.Startables
 import org.testcontainers.utility.DockerImageName
 
 abstract class BaseTests {
+
     @Autowired
     lateinit var restTemplate: TestRestTemplate
 

@@ -1,6 +1,7 @@
 package com.gift.go.assessment.unit.security.service
 
 import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.gift.go.assessment.security.domain.IPFail
 import com.gift.go.assessment.security.domain.IPInformation
@@ -9,6 +10,9 @@ import com.gift.go.assessment.utils.getMockIPInformationForAws
 import com.gift.go.assessment.utils.getMockIPInformationForAzure
 import com.gift.go.assessment.utils.getMockIPInformationForGcp
 import com.gift.go.assessment.utils.getReservedRangeIpInformation
+import io.mockk.every
+import io.mockk.mockk
+import javax.swing.tree.TreeNode
 import kotlinx.coroutines.test.runTest
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -21,6 +25,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
+import kotlin.reflect.KClass
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -37,6 +42,7 @@ class IPInformationServiceTest {
             val webClient = WebClient.builder()
                 .baseUrl(mockWebServer.url("/").toString())
                 .build()
+            // TODO could have mocked object mapper interactions, but the function used with in the service is a bit tricky, will deal with this later
             val objectMapper = jacksonObjectMapper().apply {
                 this.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             }
