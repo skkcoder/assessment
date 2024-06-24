@@ -27,6 +27,7 @@ class IPInformationService(val webClient: WebClient, val objectMapper: ObjectMap
             .uri("/json/$ipAddress")
             .retrieve()
             .awaitBody<JsonNode>()
+        logger.info("Successfully received response from IP API, status= ${response.get("status")?.asText()}")
         return if (response.get("status")?.asText() == "success") {
             objectMapper.treeToValue(response, IPInformation::class.java)
         } else {

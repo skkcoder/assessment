@@ -1,8 +1,6 @@
 package com.gift.go.assessment.fileprocessing.api
 
 import com.gift.go.assessment.fileprocessing.services.FileProcessorService
-import com.gift.go.assessment.security.domain.IPResult
-import com.gift.go.assessment.security.filter.toSecurityAudit
 import java.io.InputStream
 import java.io.SequenceInputStream
 import java.util.*

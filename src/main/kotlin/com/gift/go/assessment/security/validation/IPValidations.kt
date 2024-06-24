@@ -4,8 +4,6 @@ import com.gift.go.assessment.security.config.IPProperties
 import com.gift.go.assessment.security.domain.IPFail
 import com.gift.go.assessment.security.domain.IPInformation
 import com.gift.go.assessment.security.domain.IPResult
-import jakarta.annotation.PostConstruct
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 
 @Component

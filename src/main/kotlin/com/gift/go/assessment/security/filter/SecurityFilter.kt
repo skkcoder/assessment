@@ -56,7 +56,7 @@ class SecurityFilter(
 
     private fun buildError(exchange: ServerWebExchange): Mono<Unit> {
         exchange.response.statusCode = HttpStatus.FORBIDDEN
-        val bufferFactory = exchange.response.bufferFactory();
+        val bufferFactory = exchange.response.bufferFactory()
         // Don't give more information to the attacker
         val dataBuffer = bufferFactory.wrap("Unauthorized IP address".toByteArray())
         return exchange.response.writeWith(Mono.just(dataBuffer)).then(Mono.just(Unit))

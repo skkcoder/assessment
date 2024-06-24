@@ -4,9 +4,7 @@ import com.gift.go.assessment.security.domain.IPFail
 import com.gift.go.assessment.security.domain.IPInformation
 import com.gift.go.assessment.security.domain.IPResult
 import com.gift.go.assessment.security.domain.SecurityAuditInformationDTO
-import java.lang.IllegalStateException
 import java.time.LocalDateTime
-import java.util.*
 import org.springframework.web.server.ServerWebExchange
 
 /**
