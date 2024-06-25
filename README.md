@@ -130,7 +130,6 @@ To perform a quick test, refer [quicktests.http](quicktests.http) and place the 
 ```
 
 #### [Alternatives and things to do](#alternatives-and-things-to-do)
-* Idempotency of requests
 * Integration tests to a separate source set
 * Feature flag - Currently it is a simple implementation using configuration properties. 
 * Global exception handler to handle text processing errors and respond with BadRequest instead of 500 Internal Server Error
