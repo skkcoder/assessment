@@ -5,7 +5,7 @@ dev:
 	docker-compose up --detach
 
 build:
-	./gradlew clean build bootRun
+	./gradlew clean build
 
 execute: build
 	./gradlew bootRun
