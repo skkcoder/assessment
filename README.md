@@ -2,7 +2,7 @@
 
 Develop a Restful system that accepts an input file of a specific format, process it and respond with output file.
 
-<< New Branch to handle TODOs and FIXME >> And also upgrading the test stack.
+<< New Branch to handle TODOs and FIXME >> And also upgrading the test stack and bringing the best practices.
 
 ### Contents
 
