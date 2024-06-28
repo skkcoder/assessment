@@ -1,9 +1,12 @@
 package com.skkcoder.assessment.security.domain
 
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
+import org.mapstruct.InjectionStrategy
+import org.mapstruct.Mapper
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Table
+
 
 data class SecurityAuditInformationDTO(
     val requestIp: String,
@@ -28,15 +31,7 @@ data class SecurityAuditInformation(
     var responseCode: Int? = null
 )
 
-/**
- * TODO - use a mapper
- */
-fun mapToTable(dto: SecurityAuditInformationDTO) = SecurityAuditInformation().apply {
-    requestIp = dto.requestIp
-    requestIpProvider = dto.requestIpProvider
-    requestCountryCode = dto.requestCountryCode
-    requestUri = dto.requestUri
-    requestStart = dto.requestStart
-    timeLapsed = dto.timeLapsed
-    responseCode = dto.responseCode
+@Mapper(componentModel = "spring", injectionStrategy = InjectionStrategy.CONSTRUCTOR)
+interface SecurityAuditInformationMapper {
+    fun mapToSecurityAuditInformation(source: SecurityAuditInformationDTO): SecurityAuditInformation
 }
